@@ -16,7 +16,7 @@
 
 /* --- Estilos Globais (body, container) --- */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
     background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
@@ -25,6 +25,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    -webkit-font-smoothing: antialiased;
 }
 
 .container {
@@ -51,6 +52,7 @@ header {
         transform: translateY(-100%);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
@@ -68,7 +70,8 @@ header {
     border-radius: 12px;
     animation: fadeInContent 1s ease forwards;
     box-sizing: border-box;
-    width: 95%; /* Ajuste para o layout da página de login */
+    width: 95%;
+    /* Ajuste para o layout da página de login */
 }
 
 @keyframes fadeInContent {
@@ -76,6 +79,7 @@ header {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -90,37 +94,31 @@ header {
 }
 
 /* --- Estilos para a Seção Hero (Imagem Principal) --- */
-.hero-section {
+.hero {
     width: 100%;
-    margin: 0;
-    padding: 0;
     overflow: hidden;
+    max-height: 520px;
+    min-height: 180px;
 }
 
-.hero-image-container {
-    width: 100%;
-    height: 300px;
-    overflow: hidden;
-}
-
-.hero-image {
+.hero img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
+    object-position: center top;
     display: block;
 }
 
-/* Media Queries para Responsividade do Hero */
+/* Responsividade da Hero */
 @media (max-width: 992px) {
-    .hero-image-container {
-        height: 250px;
+    .hero {
+        max-height: 380px;
     }
 }
 
-@media (max-width: 768px) {
-    .hero-image-container {
-        height: 200px;
+@media (max-width: 576px) {
+    .hero {
+        max-height: 240px;
     }
 }
 
@@ -153,10 +151,12 @@ header {
     .carousel-item img {
         height: 300px;
     }
+
     .carousel-caption {
         padding: 10px;
         font-size: 0.8em;
     }
+
     .carousel-caption h5 {
         font-size: 1.2em;
     }
@@ -345,6 +345,7 @@ header {
         margin: 0 10px;
         font-size: 1rem;
     }
+
     main {
         max-width: 90%;
         margin: 30px auto;
@@ -356,30 +357,38 @@ header {
         flex-direction: column;
         align-items: center;
     }
+
     .main-nav ul li {
         margin: 10px 0;
     }
+
     main {
         margin: 20px 15px;
         padding: 20px;
         border-radius: 8px;
     }
+
     .section-title {
         font-size: 2em;
     }
+
     .section-description {
         font-size: 1em;
     }
+
     .titulo-doacao h1 {
         font-size: 2.2em;
     }
+
     .botao-doar button {
         font-size: 1.3em;
         padding: 15px 30px;
     }
+
     .campanhas h2 {
         font-size: 1.8em;
     }
+
     .icon-circle {
         width: 60px;
         height: 60px;

@@ -7,11 +7,12 @@ load_dotenv()  # Carrega as variáveis do arquivo .env
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Chave secreta de segurança (lida do arquivo .env)
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-fallback-key-altere-no-env')
 
-DEBUG = True
+# Em produção, defina DEBUG=False no arquivo .env
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -25,6 +26,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Serve arquivos estáticos em produção
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -99,12 +101,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Configurações de E-mail (SMTP)
+# Configurações de E-mail (lidas do .env para não expor dados sensíveis no código)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com' # Exemplo para Gmail
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = '[SEU_EMAIL_AQUI]' # Seu email remetente
-EMAIL_HOST_PASSWORD = '[SUA_SENHA_DE_APP_AQUI]' # Sua senha de app ou senha do email
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-EMAIL_RECIPIENT = '[EMAIL_DESTINATARIO]' # Email para onde as mensagens do formulário de contato irão
+EMAIL_RECIPIENT = os.getenv('EMAIL_RECIPIENT', '')
