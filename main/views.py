@@ -2,12 +2,32 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
+from django.http import JsonResponse
 from .forms import ContatoForm
 from main.models import CarouselImage
 from .models import CasoDeAjuda, Acao, Depoimento, Beneficiaria, Colaborador, BalancoFinanceiro, PoliticaTransparencia
 from .forms import ContatoForm, BeneficiariaForm, ColaboradorForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
+
+from .services.sarah_ai import AssistenteSocialIA
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def api_triagem_social(request, beneficiaria_id):
+    """API para gerar a triagem via Gemini."""
+    if request.method == 'POST':
+        ben = get_object_or_404(Beneficiaria, id=beneficiaria_id)
+        ia = AssistenteSocialIA()
+        
+        parecer = ia.gerar_triagem(
+            nome=ben.nome_completo,
+            gravida=ben.situacao_gravidez,
+            medico=ben.historico_medico,
+            necessidades=ben.necessidades
+        )
+        return JsonResponse({"parecer": parecer})
+    return JsonResponse({"error": "Método não permitido"}, status=405)
 
 
 def transparencia(request):

@@ -14,4 +14,5 @@ urlpatterns = [
     path('cadastro-beneficiaria/', views.cadastro_beneficiaria, name='cadastro_beneficiaria'),
     path('cadastro-colaborador/', views.cadastro_colaborador, name='cadastro_colaborador'),
     path('relatorio-usuarios/', views.relatorio_usuarios, name='relatorio_usuarios'),
+    path('api/triagem-social/<int:beneficiaria_id>/', views.api_triagem_social, name='api_triagem_social'),
 ]

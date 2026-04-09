@@ -74,6 +74,7 @@
                     <th>Endereço</th>
                     <th>Situação da Gravidez</th>
                     <th>Necessidades</th>
+                    <th class="no-print">Triagem Social (Aura AI)</th>
                 </tr>
             </thead>
             <tbody>
@@ -85,6 +86,11 @@
                     <td>{{ b.endereco }}</td>
                     <td>{{ b.situacao_gravidez }}</td>
                     <td>{{ b.necessidades }}</td>
+                    <td class="no-print">
+                        <button class="btn btn-sm btn-outline-danger" onclick="gerarTriagem({{ b.id }}, '{{ b.nome_completo }}')">
+                            🧠 Analisar
+                        </button>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -121,5 +127,76 @@
         <p>Nenhum colaborador cadastrado.</p>
         {% endif %}
     </div>
+
+    <!-- Modal Triagem IA -->
+    <div class="modal fade" id="modalTriagem" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-danger">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">🧠 Assistente Social (Sarah AI) - Triagem</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalTriagemBody">
+                    <div class="text-center" id="loader-ia" style="display: none;">
+                        <div class="spinner-border text-danger" role="status"></div>
+                        <p class="mt-2 text-muted">A rede neural de Sarah está analisando o acolhimento para <strong id="nome-gestante"></strong>...</p>
+                    </div>
+                    <div id="resultado-ia" style="font-size: 1.1rem; line-height: 1.6;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar Relatório</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const modalTriagem = new bootstrap.Modal(document.getElementById('modalTriagem'));
+
+        function gerarTriagem(id, nome) {
+            document.getElementById('nome-gestante').innerText = nome;
+            document.getElementById('resultado-ia').innerHTML = '';
+            document.getElementById('loader-ia').style.display = 'block';
+            modalTriagem.show();
+
+            fetch(`/api/triagem-social/${id}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('loader-ia').style.display = 'none';
+                if(data.parecer) {
+                    document.getElementById('resultado-ia').innerHTML = data.parecer;
+                } else {
+                    document.getElementById('resultado-ia').innerHTML = `<p class="text-danger">Erro: ${data.error}</p>`;
+                }
+            })
+            .catch(err => {
+                document.getElementById('loader-ia').style.display = 'none';
+                document.getElementById('resultado-ia').innerHTML = '<p class="text-danger">A API da IA não pôde ser alcançada. Verifique os logs do servidor.</p>';
+                console.error(err);
+            });
+        }
+    </script>
 </body>
 </html>
